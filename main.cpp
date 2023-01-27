@@ -4,7 +4,7 @@
 
 const int tx = 2; // 送信
 const int rx = 5; // 受信
-const int button = 17; // ボタン
+const int button = 1; // ボタン
 
 int b_num[] = {0,0,0}; // 受信時使用
 boolean exist[8]; // 中身があるかどうか
@@ -91,6 +91,10 @@ void read(){
   if(state == 1 || state == 3){
     state++; 
   }
+  if(state == 0){
+    reel = -1;
+    state == 5;
+  }
 }
 
 // セットアップ
@@ -137,10 +141,8 @@ void loop(){
       send(num);
       exist[num] = false; // 排出したので中身がなくなる
 
-      // すべて空になったら case 5 へ
-      
-        
       state = 0;
+
       break;
     
     // ノーマルモード
@@ -158,18 +160,17 @@ void loop(){
       delay(delay_t);
       digitalWrite(tx, LOW);
 
-      // すべて空になったら case 5 へ
-      
       state = 0;
+
       break;
 
       case 5:
-        reel = reel%8;
-        while(exist[reel]){
-          reel++;
-        }
         if(reel == 0){
-          M5.Lcd.drawJpgFile(SD, "/m0.jpg");
+          if(exist[reel]){
+            M5.Lcd.drawJpgFile(SD, "/m0.jpg");
+          } else {
+            M5.Lcd.drawJpgFile(SD, "/ng_m0.jpg");
+          }
         } else if(reel == 1){
           M5.Lcd.drawJpgFile(SD, "/m1.jpg");
         } else if(reel == 2){
@@ -182,14 +183,16 @@ void loop(){
           M5.Lcd.drawJpgFile(SD, "/m5.jpg");
         } else if(reel == 6){
           M5.Lcd.drawJpgFile(SD, "/m6.jpg");
-        } else {
+        } else if(reel == 7){
           M5.Lcd.drawJpgFile(SD, "/m7.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/image.jpg");
         }
         state++;
         break;
 
       case 6:
-        if(M5.BtnA.wasPressed()){
+        if(M5.BtnA.wasPressed() && reel > 0){
           reel--;
           while(exist[reel]){
             reel--;
