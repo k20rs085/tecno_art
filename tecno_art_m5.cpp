@@ -250,17 +250,10 @@ void loop(){
         reel++;
         state--;
       }
-      if(M5.BtnB.wasPressed() && exist[reel] == false){
+      if(M5.BtnB.wasPressed()){
         exist[reel] = true;
-        digitalWrite(rx, HIGH);
-        delay(delay_t);
         send(reel);
         picture();
-        state = 0;
-      } else if(M5.BtnB.wasPressed()){
-        digitalWrite(rx, HIGH);
-        delay(delay_t);
-        digitalWrite(rx, LOW);
         state = 0;
       }
     break;
@@ -274,6 +267,7 @@ void loop(){
     case 9:
       if(digitalRead(option) == LOW){
         state = 0;
+        picture();
       }
     break;
   }	
