@@ -5,6 +5,7 @@
 const int tx = 2; // 送信
 const int rx = 5; // 受信
 const int button = 1; // ボタン
+const int option = 3; // オプションモード信号
 
 int b_num[] = {0,0,0}; // 受信時使用
 boolean exist[8]; // 中身があるかどうか
@@ -122,15 +123,20 @@ void loop(){
   switch(state){
     // 開始待ち
     case 0:
-      // M5ボタンを押すと設定モードへ
+      // M5ボタンを押すとオプションモードへ
       if(M5.BtnA.wasPressed() || M5.BtnB.wasPressed() || M5.BtnC.wasPressed()){
         reel = -1;
         state = 5;
       }
 
+      // オプションモード信号を受信した場合
+      if(digitalRead(option) == HIGH){
+        state = 8;
+      }
+
       // 開始合図受信
       receive();
-      break;
+    break;
 
     // 確変モード
     case 1:
@@ -139,7 +145,7 @@ void loop(){
       for(int i = 0; i < 1000; i++){
         delay(1);
       }
-      break;
+    break;
 
     case 2:
       num = reel;
@@ -148,13 +154,13 @@ void loop(){
 
       state = 0;
 
-      break;
+    break;
     
     // ノーマルモード
     case 3:
       picture();
       reel++;
-      break;
+    break;
 
     case 4:
       reel = num;
@@ -167,88 +173,108 @@ void loop(){
 
       state = 0;
 
-      break;
+    break;
 
-      // 設定モード(5 ～ 7)
-      // Arduinoへ 設定モードを通知
-      case 5:
-      //
-      //
-
-        break;
+    // オプションモード(5 ～ 7)
+    // Arduinoへ 設定モードを通知
+    case 5:
+      digitalWrite(tx, HIGH);
+      delay(delay_t);
+      digitalWrite(tx, LOW);
+      state++;
+    break;
 
       // 画像の表示
-      case 6:
-        if(reel == 0){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m0.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m0.jpg");
-          }
-        } else if(reel == 1){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m1.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m1.jpg");
-          }
-        } else if(reel == 2){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m2.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m2.jpg");
-          }
-        } else if(reel == 3){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m3.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m3.jpg");
-          }
-        } else if(reel == 4){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m4.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m4.jpg");
-          }
-        } else if(reel == 5){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m5.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m5.jpg");
-          }
-        } else if(reel == 6){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m6.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m6.jpg");
-          }
-        } else if(reel == 7){
-          if(exist[reel]){
-            M5.Lcd.drawJpgFile(SD, "/m7.jpg");
-          } else {
-            M5.Lcd.drawJpgFile(SD, "/ng_m7.jpg");
-          }
+    case 6:
+      if(reel == 0){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m0.jpg");
         } else {
-          M5.Lcd.drawJpgFile(SD, "/image.jpg");
+          M5.Lcd.drawJpgFile(SD, "/ng_m0.jpg");
         }
-        state++;
-        break;
+      } else if(reel == 1){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m1.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m1.jpg");
+        }
+      } else if(reel == 2){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m2.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m2.jpg");
+        }
+      } else if(reel == 3){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m3.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m3.jpg");
+        }
+      } else if(reel == 4){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m4.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m4.jpg");
+        }
+      } else if(reel == 5){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m5.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m5.jpg");
+        }
+      } else if(reel == 6){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m6.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m6.jpg");
+        }
+      } else if(reel == 7){
+        if(exist[reel]){
+          M5.Lcd.drawJpgFile(SD, "/m7.jpg");
+        } else {
+          M5.Lcd.drawJpgFile(SD, "/ng_m7.jpg");
+        }
+      } else {
+        M5.Lcd.drawJpgFile(SD, "/image.jpg");
+      }
+      state++;
+    break;
 
-      // ボタン操作
-      case 7:
-        if(M5.BtnA.wasPressed() && reel > 0){
-          reel--;
-          state--;
-        }
-        if(M5.BtnC.wasPressed() && reel < 7){
-          reel++;
-          state--;
-        }
-        if(M5.BtnB.wasPressed() && exist[reel] == false){
-          exist[reel] = true;
-          state = 0;
-        } else if(M5.BtnB.wasPressed()){
-          state = 0;
-        }
-        break;
+    // ボタン操作
+    case 7:
+      if(M5.BtnA.wasPressed() && reel > 0){
+        reel--;
+        state--;
+      }
+      if(M5.BtnC.wasPressed() && reel < 7){
+        reel++;
+        state--;
+      }
+      if(M5.BtnB.wasPressed() && exist[reel] == false){
+        exist[reel] = true;
+        digitalWrite(rx, HIGH);
+        delay(delay_t);
+        send(reel);
+        picture();
+        state = 0;
+      } else if(M5.BtnB.wasPressed()){
+        digitalWrite(rx, HIGH);
+        delay(delay_t);
+        digitalWrite(rx, LOW);
+        state = 0;
+      }
+    break;
+
+    // 他機オプションモード(8 ~ 9)
+    case 8:
+      M5.Lcd.drawJpgFile(SD, "/stop.jpg");
+      state++;
+    break;
+
+    case 9:
+      if(digitalRead(option) == LOW){
+        state = 0;
+      }
+    break;
   }	
 }
